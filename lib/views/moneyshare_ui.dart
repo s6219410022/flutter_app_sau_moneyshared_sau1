@@ -1,4 +1,7 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_app_sau_moneyshared_sau/views/show_moneyshare_ui.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
 class MoneyshareUI extends StatefulWidget {
@@ -9,6 +12,60 @@ class MoneyshareUI extends StatefulWidget {
 }
 
 class _MoneyshareUIState extends State<MoneyshareUI> {
+  bool? check_tip = false;
+
+  TextEditingController money_ctrl = TextEditingController();
+  TextEditingController person_ctrl = TextEditingController();
+  TextEditingController tip_ctrl = TextEditingController();
+  //เมธอด -> โค้ดแสดง Dialog เตือน โดยจะรับข้อความมาแสดงที่ Dialog
+  showWarningDialog(context, msg) {
+//เรียกใช้งานฟังก์ชัน showDialog
+    showDialog(
+      context: context,
+      builder: (context) {
+        return AlertDialog(
+          title: Container(
+            color: Colors.deepPurple,
+            padding: EdgeInsets.only(
+              top: 10.0,
+              bottom: 10.0,
+            ),
+            child: Align(
+              alignment: Alignment.center,
+              child: Text(
+                'คำเตือน',
+                style: TextStyle(
+                  color: Colors.white,
+                ),
+              ),
+            ),
+          ),
+          content: Text(
+            msg,
+          ),
+          actions: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    Navigator.pop(context);
+                  },
+                  child: Text(
+                    'ตกลง',
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.deepPurple,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,6 +93,7 @@ class _MoneyshareUIState extends State<MoneyshareUI> {
                   top: 30.0,
                 ),
                 child: TextField(
+                  controller: money_ctrl,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     hintText: 'ป้อนจำนวนเงินบาท (บาท)',
@@ -46,26 +104,23 @@ class _MoneyshareUIState extends State<MoneyshareUI> {
                       FontAwesomeIcons.moneyBillWaveAlt,
                       color: Color(0xFF380FDC),
                     ),
-                    focusedBorder: UnderlineInputBorder( 
-                      borderSide: BorderSide( 
-                        color: Color(0xFF3B0CF5)
-                      ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Color(0xFF3B0CF5)),
                     ),
-                    enabledBorder: UnderlineInputBorder( 
-                      borderSide: BorderSide( 
-                        color: Color(0xFF3B0CF5)
-                      ),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Color(0xFF3B0CF5)),
                     ),
                   ),
                 ),
               ),
-               Padding(
+              Padding(
                 padding: const EdgeInsets.only(
                   left: 40.0,
                   right: 40.0,
                   top: 20.0,
                 ),
                 child: TextField(
+                  controller: person_ctrl,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     hintText: 'ป้อนจำนวนคน (คน)',
@@ -76,42 +131,47 @@ class _MoneyshareUIState extends State<MoneyshareUI> {
                       FontAwesomeIcons.pray,
                       color: Color(0xFF380FDC),
                     ),
-                    focusedBorder: UnderlineInputBorder( 
-                      borderSide: BorderSide( 
-                        color: Color(0xFF3B0CF5)
-                      ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Color(0xFF3B0CF5)),
                     ),
-                    enabledBorder: UnderlineInputBorder( 
-                      borderSide: BorderSide( 
-                        color: Color(0xFF3B0CF5)
-                      ),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Color(0xFF3B0CF5)),
                     ),
                   ),
                 ),
               ),
-              SizedBox( 
+              SizedBox(
                 height: 15.0,
               ),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
-                children: [ 
-                  Checkbox( 
-                    onChanged: (checked) {},
-                    value: false,
+                children: [
+                  Checkbox(
+                    onChanged: (checked) {
+                      setState(() {
+                        check_tip = checked;
+                        if (checked == false){ 
+                          tip_ctrl.text = '';
+                        }
+                      });
+                    },
+                    value: check_tip,
+                    activeColor: Color(0xFFFF2D00),
+                    side: BorderSide(
+                      color: Color(0xFF5A026A),
+                    ),
                   ),
-                  Text( 
-                    'ทิปให้พนักงานเสริฟ'
-                   
-                  ),
+                  Text('ทิปให้พนักงานเสริฟ'),
                 ],
               ),
-            Padding(
+              Padding(
                 padding: const EdgeInsets.only(
                   left: 40.0,
                   right: 40.0,
                   top: 30.0,
                 ),
                 child: TextField(
+                  controller: tip_ctrl,
                   keyboardType: TextInputType.number,
                   decoration: InputDecoration(
                     hintText: 'ป้อนจำนวนเงินบาท (บาท)',
@@ -122,54 +182,101 @@ class _MoneyshareUIState extends State<MoneyshareUI> {
                       FontAwesomeIcons.bitcoin,
                       color: Color(0xFF380FDC),
                     ),
-                    focusedBorder: UnderlineInputBorder( 
-                      borderSide: BorderSide( 
-                        color: Color(0xFF3B0CF5)
-                      ),
+                    focusedBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Color(0xFF3B0CF5)),
                     ),
-                    enabledBorder: UnderlineInputBorder( 
-                      borderSide: BorderSide( 
-                        color: Color(0xFF3B0CF5)
-                      ),
+                    enabledBorder: UnderlineInputBorder(
+                      borderSide: BorderSide(color: Color(0xFF3B0CF5)),
                     ),
                   ),
                 ),
-              ), 
-            SizedBox(
-              height: 30.0,
-            ),           
-            ElevatedButton( 
-              onPressed: () {},
-              child: Text(
-                'คำนวณ',
               ),
-              style: ElevatedButton.styleFrom(
-                fixedSize: Size( 
-                  MediaQuery.of(context).size.width - 80.0,
-                  50.0,
-                ),
-                  primary: Color(0xFF0004FF)
-                ),
-            ),
-            SizedBox(
-              height: 10.0,
-            ),           
-            ElevatedButton.icon( 
-              onPressed: () {},
-              label: Text(
-                'ยกเลิก'
+              SizedBox(
+                height: 30.0,
               ),
-            icon: Icon( 
-              FontAwesomeIcons.sync,
-            ),
-            style: ElevatedButton.styleFrom(
-                fixedSize: Size( 
-                  MediaQuery.of(context).size.width - 80.0,
-                  50.0,
+              ElevatedButton(
+                onPressed: () {
+                  double? moneyshare = 0;
+
+                  if (money_ctrl.text.isEmpty) {
+                    showWarningDialog(context, 'ป้อนเงินด้วยจ้าาา....');
+                    return;
+                  } else if (person_ctrl.text.length == 0) {
+                    showWarningDialog(context, 'ป้อนคนด้วยจ้าาา....');
+                    return;
+                  } else if (check_tip == false) {
+                    double? money = double.parse(money_ctrl.text);
+                    int? person = int.parse(person_ctrl.text);
+                    moneyshare = money / person;
+                  } else {
+                    if (tip_ctrl.text.isEmpty) {
+                      showWarningDialog(context, 'ป้อนทิปด้วย.....');
+                    } else {
+                      double? money = double.parse(money_ctrl.text);
+                      int? person = int.parse(person_ctrl.text);
+                      double? tip = double.parse(tip_ctrl.text);
+                      moneyshare = (money + tip) / person;
+                    }
+                  }
+                  //ส่งข้อมูลที่ป้อน
+                  Navigator.push( 
+                    context,
+                    MaterialPageRoute( 
+                      builder: (context)=>ShowMoneyshareUI( 
+                        money: double.parse(money_ctrl.text),
+                        person: int.parse(person_ctrl.text),
+                        tip: double.parse(tip_ctrl.text.isEmpty?'0': tip_ctrl.text),
+                        moneyshare: moneyshare,
+                      ),
+                    ),
+                  );
+                },
+                child: Text(
+                  'คำนวณ',
                 ),
-                  primary: Color(0xFFFF0000)
+                style: ElevatedButton.styleFrom(
+                    fixedSize: Size(
+                      MediaQuery.of(context).size.width - 80.0,
+                      50.0,
+                    ),
+                    primary: Color(0xFF0004FF)),
+              ),
+              SizedBox(
+                height: 10.0,
+              ),
+              ElevatedButton.icon(
+                onPressed: () {
+                  setState(() {
+                    money_ctrl.text = '';
+                    person_ctrl.text = '';
+                    tip_ctrl.text = '';
+                    check_tip = false;
+                  });
+                },
+                label: Text('ยกเลิก'),
+                icon: Icon(
+                  FontAwesomeIcons.sync,
                 ),
-            ),
+                style: ElevatedButton.styleFrom(
+                    fixedSize: Size(
+                      MediaQuery.of(context).size.width - 80.0,
+                      50.0,
+                    ),
+                    primary: Color(0xFFFF0000)),
+              ),
+              SizedBox(
+                height: 40.0,
+              ),
+              Text(
+                'Created by NINNIN SAU',
+                style: TextStyle(
+                  color: Colors.grey[800],
+                  fontSize: 16.0,
+                ),
+              ),
+              SizedBox(
+                height: 50.0,
+              ),
             ],
           ),
         ),
